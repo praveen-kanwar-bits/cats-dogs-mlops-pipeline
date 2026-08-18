@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+mlruns/
+.dvc/tmp/
+data/raw/
+data/processed/
+artifacts/model/*.pt
+artifacts/evaluation/*
+monitoring/reports/*.json
+.pytest_cache/
+ruff_cache/
+*.egg-info/
