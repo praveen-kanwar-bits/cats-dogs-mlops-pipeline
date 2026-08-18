@@ -1,0 +1,3 @@
+image_path,true_label
+tests/fixtures/sample_cat.jpg,cat
+tests/fixtures/sample_dog.jpg,dog

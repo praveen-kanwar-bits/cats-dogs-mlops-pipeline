@@ -1,0 +1,34 @@
+stages:
+  preprocess:
+    cmd: python scripts/preprocess.py
+    deps:
+      - scripts/preprocess.py
+      - src/cats_dogs_mlops/application/preprocessing.py
+      - data/raw
+      - params.yaml
+    outs:
+      - data/processed
+
+  train:
+    cmd: python scripts/train.py
+    deps:
+      - scripts/train.py
+      - src/cats_dogs_mlops/application/training.py
+      - data/processed
+      - params.yaml
+    outs:
+      - artifacts/model/cats_dogs_cnn.pt
+      - artifacts/model/metadata.json
+
+  evaluate:
+    cmd: python scripts/evaluate.py
+    deps:
+      - scripts/evaluate.py
+      - src/cats_dogs_mlops/application/evaluation.py
+      - artifacts/model/cats_dogs_cnn.pt
+      - data/processed
+    outs:
+      - artifacts/evaluation/confusion_matrix.png
+      - artifacts/evaluation/training_curves.png
+    metrics:
+      - artifacts/evaluation/test_metrics.json

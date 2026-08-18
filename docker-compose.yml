@@ -1,0 +1,9 @@
+services:
+  cats-dogs-mlops-api:
+    image: ${IMAGE_NAME:-ghcr.io/owner/cats-dogs-mlops-pipeline}:${IMAGE_TAG:-latest}
+    container_name: cats-dogs-mlops-api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      - MODEL_VERSION=${IMAGE_TAG:-latest}

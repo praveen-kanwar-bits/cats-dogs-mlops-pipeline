@@ -1,0 +1,26 @@
+data:
+  image_size: 224
+  train_ratio: 0.80
+  validation_ratio: 0.10
+  test_ratio: 0.10
+  random_seed: 42
+
+augmentation:
+  horizontal_flip_probability: 0.5
+  rotation_degrees: 10
+
+training:
+  model_name: simple_cnn
+  batch_size: 32
+  epochs: 10
+  learning_rate: 0.001
+  optimizer: adam
+  random_seed: 42
+
+mlflow:
+  experiment_name: cats-dogs-classification
+
+serving:
+  model_path: artifacts/model/cats_dogs_cnn.pt
+  host: 0.0.0.0
+  port: 8000
