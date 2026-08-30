@@ -72,7 +72,11 @@ def test_metrics_endpoint():
     assert "ml_api_request_latency_seconds" in resp.text
 
 
-def test_real_release_model_loads_and_predicts():
+def test_real_release_model_loads_and_predicts(monkeypatch):
+    release_model = Path("artifacts/release/cats_dogs_cnn.pt")
+    assert release_model.is_file()
+    monkeypatch.setenv("MODEL_PATH", str(release_model))
+
     app = create_app(Path("params.yaml"))
     with TestClient(app) as client:
         ready = client.get("/ready")

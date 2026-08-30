@@ -31,7 +31,7 @@ def create_app(config_path: Path = Path("params.yaml")) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        model_path = Path(cfg.serving.model_path)
+        model_path = Path(os.getenv("MODEL_PATH", cfg.serving.model_path))
         if model_path.exists():
             model, payload = load_model_bundle(model_path)
             app.state.inference_service = InferenceService(
