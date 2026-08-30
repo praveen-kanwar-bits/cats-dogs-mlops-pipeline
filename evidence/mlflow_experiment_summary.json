@@ -1,0 +1,48 @@
+{
+  "experiment_id": "1",
+  "experiment_name": "cats-dogs-classification",
+  "tracking_store": "sqlite:///mlflow.db",
+  "artifact_root": "./mlruns/1",
+  "training_run": {
+    "run_id": "58ae81476bf847deb788a3cde386325c",
+    "status": "FINISHED",
+    "parameters": {
+      "model_name": "simple_cnn",
+      "learning_rate": "0.001",
+      "batch_size": "32",
+      "epochs": "10",
+      "optimizer": "adam",
+      "image_size": "224",
+      "random_seed": "42",
+      "augmentation": "{\"horizontal_flip_probability\": 0.5, \"rotation_degrees\": 10}"
+    },
+    "metric_series": [
+      "train_loss",
+      "train_accuracy",
+      "validation_loss",
+      "validation_accuracy"
+    ],
+    "metric_steps_per_series": 10,
+    "best_validation_accuracy": 0.7552,
+    "artifacts": [
+      "cats_dogs_cnn.pt",
+      "metadata.json",
+      "training_history.json"
+    ]
+  },
+  "evaluation_run": {
+    "run_id": "17762bf59c5a4bec877349b8695d5a55",
+    "status": "FINISHED",
+    "metrics": {
+      "test_accuracy": 0.7548,
+      "precision": 0.7612797374897456,
+      "recall": 0.7424,
+      "f1_score": 0.751721344673957
+    },
+    "artifacts": [
+      "test_metrics.json",
+      "confusion_matrix.png",
+      "training_curves.png"
+    ]
+  }
+}

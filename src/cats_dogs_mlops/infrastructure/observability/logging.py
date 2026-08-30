@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+from datetime import UTC, datetime
 
 
 def configure_logging() -> None:
@@ -9,4 +10,8 @@ def configure_logging() -> None:
 
 
 def log_json(logger: logging.Logger, payload: dict) -> None:
-    logger.info(json.dumps(payload, default=str))
+    record = dict(payload)
+    record.setdefault("timestamp", datetime.now(UTC).isoformat())
+    record.setdefault("level", "INFO")
+    record.setdefault("logger", logger.name)
+    logger.info(json.dumps(record, default=str))

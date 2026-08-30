@@ -20,8 +20,11 @@ train:
 evaluate:
 	$(PYTHON) scripts/evaluate.py
 
+promote:
+	$(PYTHON) scripts/promote_model.py
+
 mlflow:
-	mlflow ui
+	mlflow ui --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./mlruns
 
 docker-build:
 	docker build -t cats-dogs-mlops-api:local .
@@ -40,3 +43,6 @@ simulate:
 
 post-deploy-eval:
 	$(PYTHON) scripts/post_deployment_evaluation.py --manifest tests/fixtures/post_deploy_manifest.csv
+
+package:
+	$(PYTHON) scripts/create_submission.py

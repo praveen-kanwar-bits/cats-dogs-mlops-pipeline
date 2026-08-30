@@ -60,6 +60,17 @@ def build_eval_transform(image_size: int) -> transforms.Compose:
     )
 
 
+def is_valid_image(path: Path) -> bool:
+    if path.stat().st_size == 0:
+        return False
+    try:
+        with Image.open(path) as img:
+            img.verify()
+        return True
+    except Exception:
+        return False
+
+
 def collect_image_paths(raw_dir: Path) -> list[tuple[Path, str]]:
     records: list[tuple[Path, str]] = []
     for label in CLASS_NAMES:
@@ -68,7 +79,8 @@ def collect_image_paths(raw_dir: Path) -> list[tuple[Path, str]]:
             raise FileNotFoundError(f"Missing class directory: {class_dir}")
         for path in class_dir.rglob("*"):
             if path.suffix.lower() in {".jpg", ".jpeg", ".png", ".bmp"}:
-                records.append((path, label))
+                if is_valid_image(path):
+                    records.append((path, label))
     if not records:
         raise ValueError("No image files found in raw dataset")
     return records

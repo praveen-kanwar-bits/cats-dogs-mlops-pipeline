@@ -1,0 +1,98 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python scripts/preprocess.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 6f7d88e2dd49ad375a47b25976177bd6.dir
+      size: 1691102796
+      nfiles: 25005
+    - path: params.yaml
+      hash: md5
+      md5: b8d39114a26ac2c5a15b0efc71fac0dd
+      size: 443
+    - path: scripts/preprocess.py
+      hash: md5
+      md5: 8e762a097d184def96460f7f436ae867
+      size: 1687
+    - path: src/cats_dogs_mlops/application/preprocessing.py
+      hash: md5
+      md5: 8d5be46fa31361116ffeeb3e9a9f3c62
+      size: 3925
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 99f64eedcf6f9b02f759d72d228663bb.dir
+      size: 235868262
+      nfiles: 24999
+  train:
+    cmd: python scripts/train.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 99f64eedcf6f9b02f759d72d228663bb.dir
+      size: 235868262
+      nfiles: 24999
+    - path: params.yaml
+      hash: md5
+      md5: b8d39114a26ac2c5a15b0efc71fac0dd
+      size: 443
+    - path: scripts/train.py
+      hash: md5
+      md5: 704dc9c132cf2823a869ccf4e7608765
+      size: 3773
+    - path: src/cats_dogs_mlops/application/training.py
+      hash: md5
+      md5: d9ea35cedd450a383149f07ea55322e3
+      size: 5654
+    outs:
+    - path: artifacts/model/cats_dogs_cnn.pt
+      hash: md5
+      md5: d3d0d42d29d8ffc5add3389733bc71fa
+      size: 385651
+    - path: artifacts/model/metadata.json
+      hash: md5
+      md5: 33b53765bffbaf1af75d1ab6a1ba7a59
+      size: 339
+    - path: artifacts/model/training_history.json
+      hash: md5
+      md5: c2e2e413533e16e38bf8c06f33137110
+      size: 1658
+  evaluate:
+    cmd: python scripts/evaluate.py
+    deps:
+    - path: artifacts/model/cats_dogs_cnn.pt
+      hash: md5
+      md5: d3d0d42d29d8ffc5add3389733bc71fa
+      size: 385651
+    - path: artifacts/model/training_history.json
+      hash: md5
+      md5: c2e2e413533e16e38bf8c06f33137110
+      size: 1658
+    - path: data/processed
+      hash: md5
+      md5: 99f64eedcf6f9b02f759d72d228663bb.dir
+      size: 235868262
+      nfiles: 24999
+    - path: scripts/evaluate.py
+      hash: md5
+      md5: 101d5e7122c98d79d832c9fbe503539f
+      size: 1919
+    - path: src/cats_dogs_mlops/application/evaluation.py
+      hash: md5
+      md5: eaaa13125909a7ec8f46bf2cb25b3958
+      size: 2835
+    outs:
+    - path: artifacts/evaluation/confusion_matrix.png
+      hash: md5
+      md5: 3b37e3e892e9402ff5d21733909dd48b
+      size: 16200
+    - path: artifacts/evaluation/test_metrics.json
+      hash: md5
+      md5: 2f8d6ca788f309d042226139d85b7cd4
+      size: 208
+    - path: artifacts/evaluation/training_curves.png
+      hash: md5
+      md5: 127a6698969159a7c66868110e734202
+      size: 48461

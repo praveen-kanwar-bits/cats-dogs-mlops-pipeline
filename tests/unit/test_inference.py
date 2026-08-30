@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import torch
+
 from cats_dogs_mlops.application.inference import InferenceService
 
 
@@ -19,3 +20,14 @@ def test_inference_probabilities_valid():
     assert out.predicted_class in {"cat", "dog"}
     assert abs(sum(out.probabilities.values()) - 1.0) < 1e-6
     assert out.confidence == out.probabilities[out.predicted_class]
+    assert out.model_version == "test"
+
+
+def test_inference_rejects_non_image_bytes():
+    service = InferenceService(DummyModel(), ["cat", "dog"], 224, "test")
+    try:
+        service.predict_bytes(b"not an image")
+    except ValueError as exc:
+        assert "Invalid image payload" in str(exc)
+    else:
+        raise AssertionError("Non-image bytes must be rejected")

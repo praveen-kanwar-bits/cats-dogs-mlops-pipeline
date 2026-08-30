@@ -23,7 +23,7 @@ def main() -> int:
         if resp.status_code == 200:
             ok += 1
     print({"total": args.requests, "successful": ok, "failed": args.requests - ok})
-    return 0
+    return 0 if ok == args.requests else 1
 
 
 if __name__ == "__main__":

@@ -1,8 +1,16 @@
 .git
+.github
+.dvc
 __pycache__
 *.pyc
 .venv
 mlruns
+mlflow.db
 data
 tests
 monitoring
+docs
+evidence
+dist
+artifacts/model
+artifacts/evaluation

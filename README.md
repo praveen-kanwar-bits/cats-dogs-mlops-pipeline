@@ -1,6 +1,20 @@
 # cats-dogs-mlops-pipeline
 
-Production-quality reference MLOps pipeline for Cats vs Dogs image classification with DVC, PyTorch, MLflow, FastAPI, Docker, GitHub Actions CI/CD, GHCR, Docker Compose, and monitoring.
+End-to-end MLOps pipeline for Kaggle Cats vs Dogs classification using DVC, PyTorch,
+MLflow, FastAPI, Docker, GitHub Actions, GHCR, Docker Compose, Prometheus metrics, and
+post-deployment performance tracking.
+
+## Verified result
+
+- Dataset: 24,998 valid images after corrupt-file filtering
+- Split: 19,998 train / 2,500 validation / 2,500 held-out test (80%/10%/10%)
+- Input: physically preprocessed 224×224 RGB images
+- Baseline: `SimpleCNN`, 0.7548 test accuracy and 0.7517 test F1
+- Automated checks: 16 tests plus lint and compilation
+- Evaluated release: `artifacts/release/cats_dogs_cnn.pt`, protected by SHA-256 checksums
+
+See `docs/EVALUATOR_REPORT.md` for the full 50/50 rubric assessment and
+`docs/SUBMISSION_CHECKLIST.md` for external submission steps.
 
 ## Architecture
 Pragmatic clean architecture in `src/cats_dogs_mlops`:
@@ -48,13 +62,18 @@ dvc repro evaluate
 ```bash
 python scripts/train.py
 python scripts/evaluate.py
-mlflow ui
+python scripts/promote_model.py
+mlflow ui --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./mlruns
 ```
+
+The training model remains a DVC output. `promote_model.py` only promotes a structurally valid,
+evaluated checkpoint with a real MLflow run ID into the Git-tracked release directory used by CI.
 
 ## API
 ```bash
 uvicorn cats_dogs_mlops.interfaces.api.app:app --host 0.0.0.0 --port 8000
 curl http://localhost:8000/health
+curl http://localhost:8000/ready
 curl -F "file=@tests/fixtures/sample_cat.jpg" http://localhost:8000/predict
 curl http://localhost:8000/metrics
 ```
@@ -70,6 +89,8 @@ pytest -v
 ```bash
 docker build -t cats-dogs-mlops-api:local .
 docker run --rm -p 8000:8000 cats-dogs-mlops-api:local
+# in another terminal
+python scripts/smoke_test.py --base-url http://localhost:8000
 ```
 
 ## Docker Compose deployment
@@ -80,8 +101,11 @@ python scripts/smoke_test.py --base-url http://localhost:8000
 ```
 
 ## CI/CD
-- CI: `.github/workflows/ci.yml` (lint, compile, tests, docker build, GHCR publish on trusted `main` push).
-- CD: `.github/workflows/cd.yml` (trigger on successful CI for `main`, deploy via compose on self-hosted runner, smoke test gate).
+- CI: `.github/workflows/ci.yml` (lint, compile, 16 tests, release integrity, Docker build/run,
+  smoke test, GHCR publish on trusted `main` push).
+- CD: `.github/workflows/cd.yml` (successful `main` CI only, exact-SHA Compose deployment on a
+  self-hosted runner, mandatory post-deploy smoke gate).
+- One-time GitHub configuration: `docs/GITHUB_SETUP.md`.
 
 ## Monitoring and production evaluation
 ```bash
@@ -90,15 +114,28 @@ python scripts/post_deployment_evaluation.py --base-url http://localhost:8000 --
 ```
 Output: `monitoring/reports/post_deployment_metrics.json`.
 
+The checked-in manifest references 20 distinct, labeled images sampled deterministically from the
+held-out test set—not repeated copies of two fixtures.
+
+## Create final submission ZIP
+
+```bash
+python scripts/create_submission.py
+unzip -l dist/cats-dogs-mlops-assignment-2.zip
+```
+
+The archive deliberately excludes the 1.6 GB raw dataset and local caches but includes DVC
+pointers/lock data, all code/configuration, the trained release checkpoint, experiment evidence,
+evaluation artifacts, tests, and monitoring output.
+
 ## Make targets
 `make install test lint preprocess train evaluate mlflow docker-build docker-up docker-down smoke simulate post-deploy-eval`
 
-## Verification boundaries
-- **Automatically verified locally:** lint/compile/pytest.
-- **Requires dataset:** end-to-end `dvc repro` training/evaluation artifacts.
-- **Requires credentials:** Kaggle download, GHCR publish.
-- **Requires GitHub setup:** Actions permissions and secrets.
-- **Requires self-hosted runner:** CD deployment execution.
+## Verification boundary
+
+Local code, model, data pipeline, API, container, and monitoring checks are reproducible from this
+package. The student must still push the final commit to GitHub, capture green CI/GHCR/CD evidence,
+and submit the required screen recording; source code cannot manufacture those external records.
 
 ## Additional docs
 - `docs/ARCHITECTURE.md`
@@ -106,5 +143,8 @@ Output: `monitoring/reports/post_deployment_metrics.json`.
 - `docs/RUBRIC_TRACEABILITY.md`
 - `docs/DEMO_SCRIPT.md`
 - `docs/TROUBLESHOOTING.md`
+- `docs/EVALUATOR_REPORT.md`
+- `docs/GITHUB_SETUP.md`
+- `docs/SUBMISSION_CHECKLIST.md`
 - `MODEL_CARD.md`
 - `PROJECT_STATUS.md`

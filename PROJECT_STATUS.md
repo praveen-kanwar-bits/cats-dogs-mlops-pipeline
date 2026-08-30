@@ -1,27 +1,24 @@
-# PROJECT_STATUS
+# Project Status
 
-## Implemented
-Pipeline code, DVC stages, FastAPI, Docker, compose, CI/CD workflows, monitoring scripts, tests, docs.
+## Implemented and locally evidenced
 
-## Automatically Verified
-compileall, lint, pytest (in local environment).
+Full 25k-image DVC pipeline, evaluated SimpleCNN checkpoint, MLflow runs/artifacts, FastAPI,
+Prometheus metrics, structured logging, checksum-gated Docker image, Compose deployment manifest,
+GitHub CI/CD, 16 tests, 20-image post-deploy evaluation, documentation, and ZIP builder.
 
-## Requires Dataset
-`download_dataset.py`, full preprocess/train/evaluate execution.
+## Current measured results
 
-## Requires Credentials
-Kaggle credentials, GHCR auth in GitHub Actions.
+- Test accuracy: 0.7548; F1: 0.7517
+- Data split: 19,998 / 2,500 / 2,500
+- Release checkpoint: 377 KiB with committed SHA-256 checksum
+- Local test suite: 16 passed
 
-## Requires GitHub Configuration
-Actions enabled and repository permissions for package publish.
+## External completion required before submission
 
-## Requires Self-hosted Runner
-CD workflow deployment target.
+- Commit/push the final working tree.
+- Configure GitHub settings and the self-hosted production runner per `docs/GITHUB_SETUP.md`.
+- Capture green CI, GHCR publish, and CD evidence for the same final SHA.
+- Record and submit the real under-five-minute video.
 
-## Remaining Work
-Run end-to-end training/evaluation with full Kaggle dataset in target environment.
-
-## Final Submission Checklist
-- [x] Repository-side implementation complete
-- [ ] Dataset-dependent runs executed and recorded
-- [ ] CI/CD runs captured in demo
+See `docs/SUBMISSION_CHECKLIST.md`. Do not claim those external items are complete until visible in
+GitHub and included in the LMS submission.

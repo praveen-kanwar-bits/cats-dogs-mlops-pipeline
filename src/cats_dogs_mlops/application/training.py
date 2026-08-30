@@ -88,6 +88,15 @@ def _run_epoch(
     return total_loss / max(1, total), correct / max(1, total)
 
 
+def optimizer_factory(optimizer_name: str, params: Any, lr: float) -> torch.optim.Optimizer:
+    name = optimizer_name.lower().strip()
+    if name == "adam":
+        return torch.optim.Adam(params, lr=lr)
+    if name == "sgd":
+        return torch.optim.SGD(params, lr=lr, momentum=0.9)
+    raise ValueError(f"Unsupported optimizer: {optimizer_name}. Supported: 'adam', 'sgd'.")
+
+
 def train_model(
     processed_root: Path,
     image_size: int,
@@ -99,6 +108,7 @@ def train_model(
     checkpoint_path: Path,
     flip_probability: float,
     rotation_degrees: int,
+    optimizer_name: str = "adam",
 ) -> TrainResult:
     set_global_seed(seed)
     device = select_device()
@@ -111,7 +121,7 @@ def train_model(
     val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False)
 
     model = model_factory(model_name).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = optimizer_factory(optimizer_name, model.parameters(), lr=learning_rate)
     criterion = nn.CrossEntropyLoss()
 
     history: list[EpochMetrics] = []

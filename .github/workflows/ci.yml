@@ -6,7 +6,9 @@ on:
 
 permissions:
   contents: read
-  packages: write
+
+env:
+  PYTHONUNBUFFERED: "1"
 
 jobs:
   test-build:
@@ -26,9 +28,31 @@ jobs:
       - name: Compile
         run: python -m compileall src scripts tests
       - name: Test
-        run: pytest -v
+        run: pytest -v --junitxml=pytest-report.xml
+      - name: Verify promoted model integrity
+        run: cd artifacts/release && sha256sum --check SHA256SUMS
       - name: Docker build
-        run: docker build -t cats-dogs-mlops-api:${{ github.sha }} .
+        run: |
+          docker build \
+            --build-arg VCS_REF=${{ github.sha }} \
+            --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+            -t cats-dogs-mlops-api:${{ github.sha }} .
+      - name: Run container
+        run: docker run --detach --name cats-dogs-ci --publish 8000:8000 cats-dogs-mlops-api:${{ github.sha }}
+      - name: Container smoke test
+        run: python scripts/smoke_test.py --base-url http://localhost:8000 --retries 30 --delay 2
+      - name: Container logs on failure
+        if: failure()
+        run: docker logs cats-dogs-ci
+      - name: Stop test container
+        if: always()
+        run: docker rm --force cats-dogs-ci || true
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report-${{ github.sha }}
+          path: pytest-report.xml
 
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -39,6 +63,8 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+      - name: Verify promoted model integrity
+        run: cd artifacts/release && sha256sum --check SHA256SUMS
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
         with:
@@ -49,6 +75,9 @@ jobs:
         with:
           context: .
           push: true
+          build-args: |
+            VCS_REF=${{ github.sha }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
           tags: |
             ghcr.io/${{ github.repository }}:${{ github.sha }}
             ghcr.io/${{ github.repository }}:latest

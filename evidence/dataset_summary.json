@@ -1,0 +1,22 @@
+{
+  "source": "Kaggle Microsoft Cats vs Dogs dataset",
+  "raw_dvc_md5": "6f7d88e2dd49ad375a47b25976177bd6.dir",
+  "raw_dvc_files": 25005,
+  "raw_dvc_bytes": 1691102796,
+  "valid_images": 24998,
+  "image_mode": "RGB",
+  "image_width": 224,
+  "image_height": 224,
+  "split": {
+    "train": 19998,
+    "validation": 2500,
+    "test": 2500
+  },
+  "split_ratios": {
+    "train": 0.8,
+    "validation": 0.1,
+    "test": 0.1
+  },
+  "stratified": true,
+  "random_seed": 42
+}

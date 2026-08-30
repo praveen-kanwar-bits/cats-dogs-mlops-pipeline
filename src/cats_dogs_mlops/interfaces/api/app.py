@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -17,8 +18,8 @@ from cats_dogs_mlops.infrastructure.observability.logging import configure_loggi
 from cats_dogs_mlops.infrastructure.observability.metrics import (
     ERRORS_TOTAL,
     PREDICTIONS_TOTAL,
-    REQUESTS_TOTAL,
     REQUEST_LATENCY_SECONDS,
+    REQUESTS_TOTAL,
 )
 
 LOGGER = logging.getLogger("cats_dogs_mlops_api")
@@ -37,7 +38,9 @@ def create_app(config_path: Path = Path("params.yaml")) -> FastAPI:
                 model=model,
                 class_names=payload["class_names"],
                 image_size=payload.get("image_size", cfg.data.image_size),
-                model_version=payload.get("model_version", "unknown"),
+                model_version=os.getenv(
+                    "MODEL_VERSION", payload.get("model_version", "unknown")
+                ),
             )
             app.state.model_loaded = True
         yield
@@ -49,11 +52,14 @@ def create_app(config_path: Path = Path("params.yaml")) -> FastAPI:
     @app.middleware("http")
     async def metrics_middleware(request: Request, call_next):
         request_id = str(uuid.uuid4())
+        request.state.request_id = request_id
         start = time.perf_counter()
         status_code = 500
         try:
             response = await call_next(request)
             status_code = response.status_code
+            if status_code >= 400:
+                ERRORS_TOTAL.labels(path=request.url.path).inc()
             return response
         except Exception:
             ERRORS_TOTAL.labels(path=request.url.path).inc()
@@ -88,7 +94,7 @@ def create_app(config_path: Path = Path("params.yaml")) -> FastAPI:
         return JSONResponse(status_code=200, content={"status": "ready", "model_loaded": True})
 
     @app.post("/predict")
-    async def predict(file: UploadFile = File(...)) -> dict:
+    async def predict(request: Request, file: UploadFile = File(...)) -> dict:  # noqa: B008
         if not app.state.model_loaded:
             raise HTTPException(status_code=503, detail="Model not loaded")
         image_bytes = await file.read()
@@ -103,6 +109,7 @@ def create_app(config_path: Path = Path("params.yaml")) -> FastAPI:
             LOGGER,
             {
                 "event": "prediction",
+                "request_id": getattr(request.state, "request_id", "unknown"),
                 "predicted_class": result.predicted_class,
                 "confidence": result.confidence,
                 "model_version": result.model_version,

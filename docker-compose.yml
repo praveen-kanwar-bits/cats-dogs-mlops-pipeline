@@ -1,9 +1,20 @@
 services:
   cats-dogs-mlops-api:
-    image: ${IMAGE_NAME:-ghcr.io/owner/cats-dogs-mlops-pipeline}:${IMAGE_TAG:-latest}
+    image: ${IMAGE_NAME:-ghcr.io/praveen-kanwar-bits/cats-dogs-mlops-pipeline}:${IMAGE_TAG:-latest}
     container_name: cats-dogs-mlops-api
     restart: unless-stopped
     ports:
       - "${PORT:-8000}:8000"
     environment:
       - MODEL_VERSION=${IMAGE_TAG:-latest}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready')"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

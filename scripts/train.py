@@ -22,6 +22,19 @@ def git_commit() -> str:
         return "unknown"
 
 
+def get_data_version() -> str:
+    lock_file = Path("dvc.lock")
+    if lock_file.exists():
+        import hashlib
+        return hashlib.md5(lock_file.read_bytes()).hexdigest()[:12]
+    raw_dvc = Path("data/raw.dvc")
+    if raw_dvc.exists():
+        import hashlib
+        return hashlib.md5(raw_dvc.read_bytes()).hexdigest()[:12]
+    commit = git_commit()
+    return f"git-{commit[:8]}" if commit != "unknown" else "dev-unversioned"
+
+
 def main() -> int:
     cfg = load_config(Path("params.yaml"))
     tracker = MlflowTracker(cfg.mlflow.experiment_name)
@@ -52,6 +65,7 @@ def main() -> int:
             checkpoint_path=model_path,
             flip_probability=cfg.augmentation.horizontal_flip_probability,
             rotation_degrees=cfg.augmentation.rotation_degrees,
+            optimizer_name=cfg.training.optimizer,
         )
 
         for idx, metrics in enumerate(result.history, start=1):
@@ -78,7 +92,7 @@ def main() -> int:
             "git_commit": git_commit(),
             "mlflow_run_id": run.info.run_id,
             "image_size": cfg.data.image_size,
-            "data_version": "dvc-tracked",
+            "data_version": get_data_version(),
         }
         write_metadata(metadata, metadata_path)
         tracker.log_artifact(model_path)

@@ -38,9 +38,12 @@ def main() -> int:
             src = Path(row["filepath"])
             label = row["label"]
             split = row["split"]
-            target = processed / split / label / src.name
-            image = open_as_rgb(src).resize((cfg.data.image_size, cfg.data.image_size))
-            image.save(target)
+            try:
+                target = processed / split / label / src.name
+                image = open_as_rgb(src).resize((cfg.data.image_size, cfg.data.image_size))
+                image.save(target)
+            except ValueError as exc:
+                print(f"Skipping corrupt image {src}: {exc}")
 
     return 0
 

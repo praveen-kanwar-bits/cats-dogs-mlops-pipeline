@@ -1,0 +1,13 @@
+{
+  "model_version": "dev-local",
+  "model_name": "simple_cnn",
+  "class_names": [
+    "cat",
+    "dog"
+  ],
+  "git_commit": "0412ce1d97c4371521842408ba55fe3c784f703f",
+  "mlflow_run_id": "58ae81476bf847deb788a3cde386325c",
+  "image_size": 224,
+  "data_version": "4f20ed0d870e",
+  "training_timestamp": "2026-08-24T09:15:19.168217+00:00"
+}

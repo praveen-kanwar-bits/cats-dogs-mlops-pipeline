@@ -19,6 +19,7 @@ stages:
     outs:
       - artifacts/model/cats_dogs_cnn.pt
       - artifacts/model/metadata.json
+      - artifacts/model/training_history.json
 
   evaluate:
     cmd: python scripts/evaluate.py
@@ -26,6 +27,7 @@ stages:
       - scripts/evaluate.py
       - src/cats_dogs_mlops/application/evaluation.py
       - artifacts/model/cats_dogs_cnn.pt
+      - artifacts/model/training_history.json
       - data/processed
     outs:
       - artifacts/evaluation/confusion_matrix.png
