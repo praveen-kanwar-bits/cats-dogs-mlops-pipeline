@@ -5,6 +5,8 @@
 Full 25k-image DVC pipeline, evaluated SimpleCNN checkpoint, MLflow runs/artifacts, FastAPI,
 Prometheus metrics, structured logging, checksum-gated Docker image, Compose deployment manifest,
 GitHub CI/CD, 16 tests, 20-image post-deploy evaluation, documentation, and ZIP builder.
+The formal 13-page assignment report is available in both DOCX and PDF under `docs/submission/`,
+and the ZIP builder now refuses to package a submission if either format is missing.
 
 ## Current measured results
 

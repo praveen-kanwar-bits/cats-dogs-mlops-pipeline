@@ -57,7 +57,8 @@ Evaluation scale: 50/50 marks, equivalent to 100%
   predictions and confidence, and calculates accuracy, precision, recall, F1, and confusion matrix.
 - The deterministic ZIP builder includes all source code, DVC/CI/CD/container/deployment
   configuration, trained checkpoint plus checksum/metadata, MLflow evidence, plots, tests, and the
-  monitoring report while excluding raw data, caches, credentials, and virtual environments.
+  monitoring report while excluding raw data, caches, credentials, and virtual environments. It
+  also requires and includes the formal assignment report in both DOCX and PDF formats.
 - A timed recording script and strict final checklist cover the required sub-five-minute video.
 
 ## Evaluator conclusion

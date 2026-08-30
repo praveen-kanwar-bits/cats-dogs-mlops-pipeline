@@ -1,5 +1,14 @@
 # Final Submission Checklist
 
+## Formal report (do not omit)
+
+- [ ] Open `docs/submission/MLOps_Assignment_2_Final_Report.docx` and confirm the cover identifies
+  the correct course, assignment, use case, and student.
+- [ ] Open `docs/submission/MLOps_Assignment_2_Final_Report.pdf` and confirm all 13 pages render,
+  including the contents page, training curves, confusion matrix, rubric matrix, and appendices.
+- [ ] Confirm both report formats are committed and present inside the final ZIP under
+  `cats-dogs-mlops-pipeline/docs/submission/`.
+
 ## Repository and artifacts
 
 - [ ] Commit every intended file, especially `.dvc/`, `data/raw.dvc`, `dvc.lock`,
@@ -8,7 +17,8 @@
 - [ ] Confirm the GHCR image has an immutable tag equal to the final Git commit SHA.
 - [ ] Run `python scripts/create_submission.py` after all evidence files are final.
 - [ ] Open the ZIP and confirm it contains source, requirements, DVC files, workflows, Dockerfile,
-  Compose manifest, trained `.pt` checkpoint, metadata, metrics, plots, and monitoring report.
+  Compose manifest, trained `.pt` checkpoint, metadata, metrics, plots, monitoring report, and both
+  formal report formats.
 
 ## Required recording (strictly under five minutes)
 

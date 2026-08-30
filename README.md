@@ -12,6 +12,7 @@ post-deployment performance tracking.
 - Baseline: `SimpleCNN`, 0.7548 test accuracy and 0.7517 test F1
 - Automated checks: 16 tests plus lint and compilation
 - Evaluated release: `artifacts/release/cats_dogs_cnn.pt`, protected by SHA-256 checksums
+- Formal submission report: `docs/submission/MLOps_Assignment_2_Final_Report.docx` and `.pdf`
 
 See `docs/EVALUATOR_REPORT.md` for the full 50/50 rubric assessment and
 `docs/SUBMISSION_CHECKLIST.md` for external submission steps.
@@ -126,7 +127,7 @@ unzip -l dist/cats-dogs-mlops-assignment-2.zip
 
 The archive deliberately excludes the 1.6 GB raw dataset and local caches but includes DVC
 pointers/lock data, all code/configuration, the trained release checkpoint, experiment evidence,
-evaluation artifacts, tests, and monitoring output.
+evaluation artifacts, tests, monitoring output, and the formal report in both DOCX and PDF formats.
 
 ## Make targets
 `make install test lint preprocess train evaluate mlflow docker-build docker-up docker-down smoke simulate post-deploy-eval`
@@ -146,5 +147,7 @@ and submit the required screen recording; source code cannot manufacture those e
 - `docs/EVALUATOR_REPORT.md`
 - `docs/GITHUB_SETUP.md`
 - `docs/SUBMISSION_CHECKLIST.md`
+- `docs/submission/MLOps_Assignment_2_Final_Report.docx`
+- `docs/submission/MLOps_Assignment_2_Final_Report.pdf`
 - `MODEL_CARD.md`
 - `PROJECT_STATUS.md`

@@ -64,6 +64,8 @@ REQUIRED_DELIVERABLES = (
     Path(".github/workflows/ci.yml"),
     Path(".github/workflows/cd.yml"),
     Path("docker-compose.yml"),
+    Path("docs/submission/MLOps_Assignment_2_Final_Report.docx"),
+    Path("docs/submission/MLOps_Assignment_2_Final_Report.pdf"),
 )
 
 
