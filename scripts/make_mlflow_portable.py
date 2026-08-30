@@ -40,6 +40,9 @@ def main() -> int:
                 (artifact_uri, run_id),
             )
         connection.commit()
+        # Rebuild the database so superseded absolute paths are not retained in
+        # unused SQLite pages included with the portable submission artifact.
+        connection.execute("VACUUM")
 
     print(
         f"Updated {len(experiments)} experiments and {len(runs)} runs; backup written to {backup}"
