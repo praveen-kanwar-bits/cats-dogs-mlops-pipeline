@@ -41,9 +41,15 @@ jobs:
         run: docker run --detach --name cats-dogs-ci --publish 8000:8000 cats-dogs-mlops-api:${{ github.sha }}
       - name: Container smoke test
         run: python scripts/smoke_test.py --base-url http://localhost:8000 --retries 30 --delay 2
-      - name: Container logs on failure
+      - name: Container diagnostics on failure
         if: failure()
-        run: docker logs cats-dogs-ci
+        run: |
+          if docker container inspect cats-dogs-ci >/dev/null 2>&1; then
+            docker logs cats-dogs-ci
+          else
+            echo "::warning::The test container was not created. Inspect the first failed step above."
+            docker image ls --format 'table {{.Repository}}\t{{.Tag}}\t{{.ID}}'
+          fi
       - name: Stop test container
         if: always()
         run: docker rm --force cats-dogs-ci || true
