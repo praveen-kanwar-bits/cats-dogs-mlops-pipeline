@@ -20,7 +20,12 @@ def wait_for_health(base_url: str, retries: int, delay: float) -> None:
                     data = json.loads(resp.read().decode("utf-8"))
                     if data.get("model_loaded"):
                         return
-        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+        except (
+            urllib.error.URLError,
+            ConnectionError,
+            TimeoutError,
+            json.JSONDecodeError,
+        ) as exc:
             last_error = str(exc)
         time.sleep(delay)
     raise SystemExit(f"Health check failed: {last_error}")
